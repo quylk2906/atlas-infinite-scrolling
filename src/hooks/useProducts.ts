@@ -2,20 +2,25 @@ import { useState, useEffect } from 'react';
 import { getProducts } from '../mock-api';
 import { Product } from '../types';
 
-const useProducts = ({ limit, skip }: { limit: number; skip: number }) => {
-  const [data, setData] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+type State = { data: Product[]; loading: boolean; error: string | null };
+
+const useProducts = ({
+  limit,
+  offset,
+}: {
+  limit: number;
+  offset: number;
+}): State => {
+  const [data, setData] = useState<State['data']>([]);
+  const [loading, setLoading] = useState<State['loading']>(true);
+  const [error, setError] = useState<State['error']>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const result = await getProducts({
-          limit,
-          skip,
-        });
+        const result = await getProducts({ limit, offset });
         setData(result);
       } catch (err: any) {
         setError(err ?? 'Unknown error');
@@ -25,7 +30,7 @@ const useProducts = ({ limit, skip }: { limit: number; skip: number }) => {
     };
 
     fetchData();
-  }, [limit, skip]);
+  }, [limit, offset]);
 
   return { data, loading, error };
 };

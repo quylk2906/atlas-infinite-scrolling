@@ -5,19 +5,19 @@ let count = 0;
 
 export const getProducts = ({
   limit,
-  skip,
+  offset,
 }: {
   limit: number;
-  skip: number;
+  offset: number;
 }): Promise<Product[]> => {
   return new Promise((resolve, reject) => {
-    count += 1;
     setTimeout(() => {
-      if (count === 4) {
-        // Fake error case
-        reject('Something went wrong');
-      }
-      resolve(FURNITURE.slice(skip, limit));
+      count += 1;
+      // if (count === 4) {
+      //   // Fake error case
+      //   reject('Something went wrong');
+      // }
+      resolve(FURNITURE.slice(offset * limit, limit * (offset + 1)));
     }, 1000);
   });
 };

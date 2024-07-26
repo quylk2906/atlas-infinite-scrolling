@@ -1,14 +1,10 @@
-import { FURNITURE } from './fake-data';
 import Breadcrumbs from './ui/components/breadcrumbs/Breadcrumbs';
 import CategoriesRelated from './ui/components/categories-related/CategoriesRelated';
 import Footer from './ui/components/footer/Footer';
 import Header from './ui/components/header/Header';
-import Loading from './ui/components/loading/Loading';
 import NavigationPromo from './ui/components/navigation-promo/NavigationPromo';
-import ProductList from './ui/components/product-list/ProductList';
-import Product from './ui/components/product/Product';
 import Sorter from './ui/components/sorter/Sorter';
-import ViewMoreButton from './ui/components/view-more-button/ViewMoreButton';
+import ProductList from './ui/containers/product-list/ProductList';
 
 function App() {
   return (
@@ -32,24 +28,15 @@ function App() {
 
         <div className="columns">
           <div className="column main">
-            <div>
+            <div css={{ flexGrow: 1 }}>
               <div className="toolbar toolbar-products">
                 <Sorter />
               </div>
 
-              <ProductList
-                rowKey="id"
-                data={FURNITURE.slice(0, 20)}
-                renderItem={(item) => <Product {...item} />}
-              >
-                <Loading />
-
-                <ViewMoreButton />
-              </ProductList>
+              <ProductList />
             </div>
           </div>
         </div>
-
         <CategoriesRelated />
       </main>
       <Footer />
