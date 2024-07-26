@@ -1,0 +1,100 @@
+.category-collection .item {
+  display: flex;
+  justify-content: space-between;
+}
+.category-collection .item .wrap-img {
+  width: 100%;
+  height: 100%;
+}
+.category-collection .item .wrap-img img {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 15px;
+}
+.category-collection .item .cat-info {
+  box-sizing: border-box;
+}
+.category-collection .item .cat-info .cat-label {
+  display: block;
+  font-family: 'Yeseva One', 'Montserrat', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+  font-weight: 400;
+  margin-bottom: 15px;
+}
+.category-collection .item .cat-info .cat-desc {
+  color: #222321;
+  display: block;
+  font-weight: 400;
+}
+.category-collection .item .cat-info .cat-link {
+  border-bottom: 1px solid #222321;
+  color: #222321;
+  letter-spacing: 0.02em;
+  padding-bottom: 1px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.category-collection .item .cat-info .cat-link:hover {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+@media (max-width: 989px) {
+  .category-collection .item {
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+  }
+  .category-collection .item .cat-info {
+    width: 100%;
+    padding-left: 0;
+  }
+  .category-collection .item .cat-info .cat-label {
+    font-size: 20px;
+    line-height: 23px;
+    text-transform: capitalize;
+    color: #222321;
+  }
+  .category-collection .item .cat-info .cat-desc {
+    font-size: 12px;
+    line-height: 19px;
+    color: #222321;
+    margin-bottom: 10px;
+  }
+  .category-collection .item .cat-info .cat-link {
+    font-size: 12px;
+    line-height: 16px;
+    color: #222321;
+  }
+}
+@media (min-width: 990px) {
+  .category-collection {
+    max-width: 1200px;
+    margin: auto;
+  }
+  .category-collection .item {
+    margin-bottom: 90px;
+  }
+  .category-collection .item .wrap-img {
+    width: 50%;
+  }
+  .category-collection .item .wrap-img img {
+    margin-bottom: 0;
+  }
+  .category-collection .item .cat-info {
+    padding-left: 5%;
+    width: 50%;
+  }
+  .category-collection .item .cat-info .cat-label {
+    font-size: 36px;
+    line-height: 42px;
+  }
+  .category-collection .item .cat-info .cat-desc {
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 15px;
+  }
+  .category-collection .item .cat-info .cat-link {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+  }
+}
