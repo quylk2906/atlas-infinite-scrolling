@@ -1,0 +1,19 @@
+.product {
+  &_option {
+    &--white {
+      background-color: #f5f5f5;
+    }
+
+    &--black {
+      background-color: #cccccc;
+    }
+
+    &--silver {
+      background-color: #11074f;
+    }
+
+    &--wood {
+      background-image: url('https://www.arielbath.com/media/attribute/swatch/w/h/whiteoak_2.png');
+    }
+  }
+}
