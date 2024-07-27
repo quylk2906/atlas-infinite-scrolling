@@ -21,7 +21,10 @@ const ProductList: FC = () => {
   });
 
   useEffect(() => {
-    error && alert(error);
+    error &&
+      alert(
+        `${error} \nI will enhance Axios to implement retry logic for failed API requests.`
+      );
   }, [error]);
 
   useEffect(() => {
@@ -43,7 +46,7 @@ const ProductList: FC = () => {
           CONTAINER_HEIGHT
       ) <= 1
     ) {
-      // setPage((prev) => prev + 1);
+      setPage((prev) => prev + 1);
     }
   };
 
@@ -54,25 +57,28 @@ const ProductList: FC = () => {
 
   return (
     <InfiniteScrolling
-      rowKey={'id'}
+      itemKey={'id'}
       data={products}
+      height={CONTAINER_HEIGHT}
+      itemHeight={427}
+      onScroll={handleScroll}
       renderItem={(item) => (
         <Product name={item.name} image={item.image} id={item.id} />
       )}
-      height={CONTAINER_HEIGHT}
-      onScroll={handleScroll}
-    >
-      {loading && <Loading />}
-
-      {!reachedLimit.current && (
-        <ViewMoreButton
-          current={products.length}
-          total={FURNITURE.length}
-          disabled={loading}
-          onClick={handleViewMore}
-        />
-      )}
-    </InfiniteScrolling>
+      loadingIndicator={
+        <>
+          {loading && <Loading />}
+          {!reachedLimit.current && (
+            <ViewMoreButton
+              current={products.length}
+              total={FURNITURE.length}
+              disabled={loading}
+              onClick={handleViewMore}
+            />
+          )}
+        </>
+      }
+    />
   );
 };
 

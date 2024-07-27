@@ -1,29 +1,50 @@
-import React, { PropsWithChildren } from 'react';
+import React, { ReactNode, useMemo } from 'react';
+import VirtualList from 'rc-virtual-list';
+import { chunkArray } from '../../../helpers';
+import isEmpty from 'lodash/isEmpty';
 
 type RenderItem<T> = (item: T, index: number) => React.ReactNode;
 
 type Props<T> = {
   data: T[];
   renderItem?: RenderItem<T>;
-  rowKey?: ((item: T) => React.Key) | keyof T;
+  itemKey: ((item: T) => React.Key) | keyof T;
   height?: number;
+  columnCount?: number;
   itemHeight?: number;
+  loadingIndicator?: ReactNode;
   onScroll?: (e: React.UIEvent<HTMLElement, UIEvent>) => void;
 };
 
-const InfiniteScrolling = <T,>(props: PropsWithChildren<Props<T>>) => {
-  const { data, children, renderItem, rowKey, itemHeight, height, onScroll } =
-    props;
+const InfiniteScrolling = <T,>(props: Props<T>) => {
+  const {
+    data,
+    loadingIndicator,
+    itemKey,
+    itemHeight,
+    height,
+    columnCount,
+    renderItem,
+    onScroll,
+  } = props;
+
+  const chunkData = useMemo(
+    () =>
+      chunkArray(data, columnCount).map((el, idx) => ({
+        idx,
+        data: el,
+      })),
+    [data, columnCount]
+  );
 
   const renderInnerItem = (item: T, index: number) => {
     if (!renderItem) return null;
-
     let key: any;
 
-    if (typeof rowKey === 'function') {
-      key = rowKey(item);
-    } else if (rowKey) {
-      key = item[rowKey];
+    if (typeof itemKey === 'function') {
+      key = itemKey(item);
+    } else if (itemKey) {
+      key = item[itemKey];
     } else {
       key = (item as any).key;
     }
@@ -39,18 +60,33 @@ const InfiniteScrolling = <T,>(props: PropsWithChildren<Props<T>>) => {
   };
 
   return (
-    <div
-      className="products wrapper grid products-grid"
-      onScroll={onScroll}
-      css={{ height, overflowY: 'auto', overflowX: 'hidden' }}
-    >
-      <div className="products list items product-items">
-        {data.map((el, idx) => renderInnerItem(el, idx))}
-        {children}
-      </div>
-      <div className="amshopby-overlay-block">
-        <span className="amshopby-loader" />
-      </div>
+    <div className="products wrapper grid products-grid">
+      {isEmpty(chunkData) ? (
+        loadingIndicator
+      ) : (
+        <VirtualList
+          itemKey={'idx'}
+          data={chunkData}
+          height={height}
+          itemHeight={itemHeight}
+          onScroll={onScroll}
+          styles={{
+            verticalScrollBarThumb: { marginLeft: 8 },
+          }}
+        >
+          {(el, idx) => {
+            return (
+              <div key={el.idx} className="products list items product-items">
+                {el.data.map((childEl, childIdx) =>
+                  renderInnerItem(childEl, childIdx)
+                )}
+
+                {idx === chunkData.length - 1 && loadingIndicator}
+              </div>
+            );
+          }}
+        </VirtualList>
+      )}
     </div>
   );
 };

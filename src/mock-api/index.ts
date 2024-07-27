@@ -14,10 +14,10 @@ export const getProducts = ({
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       count += 1;
-      // if (count === 4) {
-      //   // Fake error case
-      //   reject('Something went wrong');
-      // }
+      if (count === 4) {
+        // Fake error case
+        reject('Something went wrong');
+      }
       resolve(FURNITURE.slice(offset * limit, limit * (offset + 1)));
     }, 1000);
   });

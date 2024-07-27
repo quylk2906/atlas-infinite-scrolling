@@ -85,7 +85,7 @@ const Product: FC<Props> = (props) => {
             <strong className="product name product-item-name">
               <a className="product-item-link">
                 <span>Ariel {name}</span>
-                {id}
+                {/* {image} */}
               </a>
             </strong>
           </div>
