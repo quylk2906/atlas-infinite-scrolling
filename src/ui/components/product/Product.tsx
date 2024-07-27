@@ -31,7 +31,7 @@ const BULLET_COLORS = [
 type BulletColor = (typeof BULLET_COLORS)[number]['value'];
 
 const Product: FC<Props> = (props) => {
-  const { name, image, id } = props;
+  const { name, image } = props;
   const [activeColor, setActiveColor] = useState<BulletColor>('white');
 
   return (

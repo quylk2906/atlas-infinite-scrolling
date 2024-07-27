@@ -3,21 +3,24 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://quylk2906.github.io/atlas-infinite-scrolling",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "gh-pages": "gh-pages -d dist",
+    "deploy": "pnpm build && gh-pages -d dist",
     "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/css": "^11.11.2",
     "@emotion/react": "^11.11.4",
-    "@virtual-grid/react": "^2.0.3",
     "clsx": "^2.1.1",
     "lodash": "^4.17.21",
     "query-string": "^9.0.0",
     "rc-virtual-list": "^3.14.5",
     "react": "^18.3.1",
+    "gh-pages": "^5.0.0",
     "react-dom": "^18.3.1",
     "sass": "^1.77.8"
   },
