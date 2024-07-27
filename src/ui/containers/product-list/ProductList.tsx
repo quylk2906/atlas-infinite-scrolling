@@ -6,15 +6,13 @@ import Loading from '../../components/loading/Loading';
 import ViewMoreButton from '../../components/view-more-button/ViewMoreButton';
 import { type Product as ProductType } from '../../../types';
 import { FURNITURE } from '../../../fake-data';
-import { debounce } from 'lodash';
 
-const DEFAULT_LIMIT = 50;
+const DEFAULT_LIMIT = 51;
 const CONTAINER_HEIGHT = (window.innerHeight * 70) / 100;
 
 const ProductList: FC = () => {
   const [page, setPage] = useState(0);
   const reachedLimit = useRef(false);
-
   const [products, setProducts] = useState<ProductType[]>([]);
 
   const { data, loading, error } = useProducts({
@@ -45,20 +43,22 @@ const ProductList: FC = () => {
           CONTAINER_HEIGHT
       ) <= 1
     ) {
-      setPage((prev) => prev + 1);
+      // setPage((prev) => prev + 1);
     }
   };
 
-  const handleViewMore = debounce(() => {
+  const handleViewMore = () => {
     if (loading || reachedLimit.current) return;
     setPage((prev) => prev + 1);
-  }, 350);
+  };
 
   return (
     <InfiniteScrolling
       rowKey={'id'}
       data={products}
-      renderItem={(item) => <Product name={item.name} image={item.image} />}
+      renderItem={(item) => (
+        <Product name={item.name} image={item.image} id={item.id} />
+      )}
       height={CONTAINER_HEIGHT}
       onScroll={handleScroll}
     >

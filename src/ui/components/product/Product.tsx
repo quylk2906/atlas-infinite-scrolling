@@ -1,15 +1,39 @@
 import clsx from 'clsx';
-import { FC } from 'react';
+import { FC, memo, useState } from 'react';
 
 import styles from './Product.module.scss';
 
 type Props = {
+  id?: string;
   name: string;
   image: string;
 };
 
+const BULLET_COLORS = [
+  {
+    id: 4209,
+    value: 'white',
+  },
+  {
+    id: 4203,
+    value: 'black',
+  },
+  {
+    id: 4206,
+    value: 'silver',
+  },
+  {
+    id: 7649,
+    value: 'wood',
+  },
+] as const;
+
+type BulletColor = (typeof BULLET_COLORS)[number]['value'];
+
 const Product: FC<Props> = (props) => {
-  const { name, image } = props;
+  const { name, image, id } = props;
+  const [activeColor, setActiveColor] = useState<BulletColor>('white');
+
   return (
     <div
       data-product-id={4522}
@@ -61,6 +85,7 @@ const Product: FC<Props> = (props) => {
             <strong className="product name product-item-name">
               <a className="product-item-link">
                 <span>Ariel {name}</span>
+                {id}
               </a>
             </strong>
           </div>
@@ -68,28 +93,18 @@ const Product: FC<Props> = (props) => {
 
         <div className="product-options">
           <div className="option-bullets color">
-            <span
-              className={clsx(
-                'option-bullet active',
-                styles['product_option--white']
-              )}
-              data-product-id={4209}
-            />
-            <span
-              className={clsx('option-bullet', styles['product_option--black'])}
-              data-product-id={4203}
-            />
-            <span
-              className={clsx(
-                'option-bullet',
-                styles['product_option--silver']
-              )}
-              data-product-id={4206}
-            />
-            <span
-              className={clsx('option-bullet', styles['product_option--wood'])}
-              data-product-id={7649}
-            />
+            {BULLET_COLORS.map((el) => (
+              <span
+                key={el.id}
+                className={clsx(
+                  'option-bullet',
+                  styles[`product_option--${el.value}`],
+                  activeColor === el.value && 'active'
+                )}
+                data-product-id={el.id}
+                onClick={() => setActiveColor(el.value)}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -97,4 +112,4 @@ const Product: FC<Props> = (props) => {
   );
 };
 
-export default Product;
+export default memo(Product);

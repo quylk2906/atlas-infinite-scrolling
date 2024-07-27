@@ -3857,6 +3857,7 @@ body.page-products .products-grid .product-items .product-item {
   margin: 0 0 50px !important;
   box-sizing: border-box;
   padding: 0;
+  cursor: pointer;
 }
 body.page-products
   .products-grid

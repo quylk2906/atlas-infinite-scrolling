@@ -10,6 +10,7 @@ export const getProducts = ({
   limit: number;
   offset: number;
 }): Promise<Product[]> => {
+  console.log(offset * limit, limit * (offset + 1));
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       count += 1;

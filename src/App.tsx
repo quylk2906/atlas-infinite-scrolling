@@ -1,3 +1,4 @@
+import { FURNITURE } from './fake-data';
 import Breadcrumbs from './ui/components/breadcrumbs/Breadcrumbs';
 import CategoriesRelated from './ui/components/categories-related/CategoriesRelated';
 import Footer from './ui/components/footer/Footer';
@@ -23,7 +24,9 @@ function App() {
               Vanities
             </span>
           </h1>
-          <span className="toolbar-amount_sidebar_title">332 Items</span>
+          <span className="toolbar-amount_sidebar_title">
+            {FURNITURE.length} Items
+          </span>
         </div>
 
         <div className="columns">

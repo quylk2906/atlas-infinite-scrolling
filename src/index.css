@@ -378,3 +378,7 @@ template {
 [hidden] {
   display: none;
 }
+
+.rc-virtual-list-holder {
+  overflow-x: hidden;
+}

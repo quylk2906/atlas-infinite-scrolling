@@ -1,10 +1,5 @@
 export const FURNITURE = [
   {
-    id: '00e1eb60-da55-48f6-848b-25d301b768b3',
-    image: '/images/ariel (255).jpg',
-    name: 'Water - San Pellegrino',
-  },
-  {
     id: '5982041a-12bc-4ab7-ad23-bbb6c5fa05e7',
     image: '/images/ariel (1).jpg',
     name: 'Mushroom - Portebello',
@@ -2498,5 +2493,10 @@ export const FURNITURE = [
     id: '08de281f-00e3-4513-9261-af1b0b0eab4d',
     image: '/images/ariel (254).jpg',
     name: 'Tea - Honey Green Tea',
+  },
+  {
+    id: '00e1eb60-da55-48f6-848b-25d301b768b3',
+    image: '/images/ariel (255).jpg',
+    name: 'Water - San Pellegrino',
   },
 ] as const;
