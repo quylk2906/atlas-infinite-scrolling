@@ -5797,14 +5797,14 @@ fieldset[disabled] .cart-container .form-cart .actions.main .clear {
   font-style: light;
   font-display: swap;
 }
-@font-face {
+/* @font-face {
   font-family: 'Montserrat';
   src: url('../fonts/Montserrat-Light.woff2') format('woff2'),
     url('../fonts/Montserrat-Light.woff') format('woff');
   font-weight: 300;
   font-style: light;
   font-display: swap;
-}
+} */
 @font-face {
   font-family: 'Montserrat';
   src: url('../fonts/Montserrat-Regular.woff2') format('woff2'),
@@ -5813,14 +5813,14 @@ fieldset[disabled] .cart-container .form-cart .actions.main .clear {
   font-style: normal;
   font-display: swap;
 }
-@font-face {
+/* @font-face {
   font-family: 'Montserrat';
   src: url('../fonts/Montserrat-Medium.woff2') format('woff2'),
     url('../fonts/Montserrat-Medium.woff') format('woff');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
-}
+} */
 @font-face {
   font-family: 'Montserrat';
   src: url('../fonts/Montserrat-SemiBold.woff2') format('woff2'),
@@ -5853,14 +5853,14 @@ fieldset[disabled] .cart-container .form-cart .actions.main .clear {
   font-style: bold;
   font-display: swap;
 }
-@font-face {
+/* @font-face {
   font-family: 'Gotham Narrow';
   src: url('../fonts/GothamNarrow-Book.woff2') format('woff2'),
     url('../fonts/GothamNarrow-Book.woff') format('woff');
   font-weight: 325;
   font-style: normal;
   font-display: swap;
-}
+} */
 @font-face {
   font-family: 'Gotham Narrow';
   src: url('../fonts/GothamNarrow-Medium.woff2') format('woff2'),
@@ -6859,14 +6859,14 @@ fieldset[disabled] ._has-datepicker ~ .ui-datepicker-trigger {
 .sidebar .fieldset .fields > .field .control {
   width: 100%;
 }
-@font-face {
+/* @font-face {
   font-family: 'luma-icons';
   src: url('../fonts/Luma-Icons.woff2') format('woff2'),
     url('../fonts/Luma-Icons.woff') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: block;
-}
+} */
 button,
 a.action.primary,
 a.amshopby-button,
@@ -12261,6 +12261,13 @@ div[data-content-type='video'] video {
     padding: 15px;
   }
 }
+
+@media only screen and (max-width: 701px) {
+  .products {
+     margin-block: 8px !important;
+  }
+}
+
 .ampromo-gift {
   display: flex;
   flex-wrap: wrap;

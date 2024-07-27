@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from 'react';
+import React, { Fragment, ReactNode, useMemo } from 'react';
 import VirtualList from 'rc-virtual-list';
 import { chunkArray } from '../../../helpers';
 import isEmpty from 'lodash/isEmpty';
@@ -76,13 +76,14 @@ const InfiniteScrolling = <T,>(props: Props<T>) => {
         >
           {(el, idx) => {
             return (
-              <div key={el.idx} className="products list items product-items">
-                {el.data.map((childEl, childIdx) =>
-                  renderInnerItem(childEl, childIdx)
-                )}
-
+              <Fragment key={el.idx}>
+                <ul className="products list items product-items">
+                  {el.data.map((childEl, childIdx) =>
+                    renderInnerItem(childEl, childIdx)
+                  )}
+                </ul>
                 {idx === chunkData.length - 1 && loadingIndicator}
-              </div>
+              </Fragment>
             );
           }}
         </VirtualList>

@@ -48,7 +48,7 @@ const Product: FC<Props> = (props) => {
           >
             <div className="data-variant-image">
               <a className="product photo product-item-photo">
-                <img src={image} data-thumbnail="" loading="lazy" />
+                <img src={image} />
               </a>
             </div>
           </div>

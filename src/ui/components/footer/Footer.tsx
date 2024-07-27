@@ -168,7 +168,7 @@ const Footer = () => {
                       <p>Payment Method</p>
                       <div>
                         <img
-                          src="/images/credit-card-logo_2x.png"
+                          src="images/credit-card-logo_2x.png"
                           alt="Credit card logo"
                           css={{ height: 30, width: 'auto' }}
                         />

@@ -12,7 +12,7 @@ const Header = () => {
                 aria-label="store logo"
               >
                 <img
-                  src="/ariel-logo_3x_1_1.png"
+                  src="ariel-logo_3x_1_1.png"
                   title="Ariel"
                   alt="Ariel"
                   width={129}
