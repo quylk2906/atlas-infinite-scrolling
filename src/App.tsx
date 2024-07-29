@@ -1,3 +1,4 @@
+import Breadcrumbs from './ui/components/breadcrumbs/Breadcrumbs';
 import CategoriesRelated from './ui/components/categories-related/CategoriesRelated';
 import Footer from './ui/components/footer/Footer';
 import Header from './ui/components/header/Header';
@@ -10,6 +11,7 @@ function App() {
     <div className="page-wrapper">
       <Header />
       <NavigationPromo />
+      <Breadcrumbs />
 
       <main id="maincontent" className="page-main">
         <div className="page-title-wrapper">

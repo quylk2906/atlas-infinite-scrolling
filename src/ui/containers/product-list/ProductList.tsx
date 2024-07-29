@@ -24,7 +24,7 @@ const ProductList: FC = () => {
 
   const shouldRemoveOnScroll = loading || reachedLimit.current || page > 0;
 
-  const { containerHeight, columnCount, gap } = useMemo(() => {
+  const { containerHeight, columnCount, itemHeight } = useMemo(() => {
     const isSmallBreakPoint = breakpoint === 'sm' || breakpoint === 'xs';
 
     return {
@@ -32,7 +32,6 @@ const ProductList: FC = () => {
         (window.innerHeight * (isSmallBreakPoint ? 80 : 70)) / 100,
       itemHeight: isSmallBreakPoint ? 334 : 528,
       columnCount: isSmallBreakPoint ? 2 : 3,
-      gap: isSmallBreakPoint ? 16 : 30,
     };
   }, [breakpoint]);
 
@@ -79,32 +78,30 @@ const ProductList: FC = () => {
   }
 
   return (
-    <div css={{ marginBlock: 32 }}>
-      <InfiniteScrolling
-        itemKey={'id'}
-        data={products}
-        height={containerHeight}
-        gap={gap}
-        onScroll={shouldRemoveOnScroll ? undefined : handleScroll}
-        columnCount={columnCount}
-        renderItem={(item) => (
-          <Product name={item.name} image={item.image} id={item.id} />
-        )}
-        loadingIndicator={
-          <>
-            {loading && <Loading />}
-            {!reachedLimit.current && (
-              <ViewMoreButton
-                current={products.length}
-                total={FURNITURE.length}
-                disabled={loading}
-                onClick={handleViewMore}
-              />
-            )}
-          </>
-        }
-      />
-    </div>
+    <InfiniteScrolling
+      itemKey={'id'}
+      data={products}
+      height={containerHeight}
+      itemHeight={itemHeight}
+      onScroll={shouldRemoveOnScroll ? undefined : handleScroll}
+      columnCount={columnCount}
+      renderItem={(item) => (
+        <Product name={item.name} image={item.image} id={item.id} />
+      )}
+      loadingIndicator={
+        <>
+          {loading && <Loading />}
+          {!reachedLimit.current && (
+            <ViewMoreButton
+              current={products.length}
+              total={FURNITURE.length}
+              disabled={loading}
+              onClick={handleViewMore}
+            />
+          )}
+        </>
+      }
+    />
   );
 };
 
