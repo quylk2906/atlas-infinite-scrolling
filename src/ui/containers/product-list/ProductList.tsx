@@ -8,14 +8,16 @@ import { type Product as ProductType } from '../../../types';
 import { FURNITURE } from '../../../fake-data';
 import useBreakpoint from '../../../hooks/useBreakpoint';
 
-const DEFAULT_LIMIT = 48;
+const DEFAULT_LIMIT = 18;
 
 const ProductList: FC = () => {
   const [page, setPage] = useState(0);
   const reachedLimit = useRef(false);
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [productHeight, setProductHeight] = useState(0);
 
   const breakpoint = useBreakpoint();
+  const isSmallBreakPoint = breakpoint === 'sm' || breakpoint === 'xs';
 
   const { data, loading, error } = useProducts({
     limit: DEFAULT_LIMIT,
@@ -24,16 +26,14 @@ const ProductList: FC = () => {
 
   const shouldRemoveOnScroll = loading || reachedLimit.current || page > 0;
 
-  const { containerHeight, columnCount, itemHeight } = useMemo(() => {
-    const isSmallBreakPoint = breakpoint === 'sm' || breakpoint === 'xs';
-
+  const { containerHeight, columnCount, gap } = useMemo(() => {
     return {
       containerHeight:
         (window.innerHeight * (isSmallBreakPoint ? 80 : 70)) / 100,
-      itemHeight: isSmallBreakPoint ? 334 : 528,
       columnCount: isSmallBreakPoint ? 2 : 3,
+      gap: isSmallBreakPoint ? 16 : 30,
     };
-  }, [breakpoint]);
+  }, [isSmallBreakPoint]);
 
   // console.log({ containerHeight, columnCount, itemHeight });
 
@@ -73,35 +73,50 @@ const ProductList: FC = () => {
     setPage((prev) => prev + 1);
   };
 
+  const handleUpdateHeight = useCallback(
+    (h: number) => {
+      // TODO: Implement resize event to handle responsive layout
+      setProductHeight(Math.round(isSmallBreakPoint ? h + 20 : h));
+    },
+    [isSmallBreakPoint, productHeight]
+  );
+
   if (!breakpoint) {
     return null;
   }
 
   return (
-    <InfiniteScrolling
-      itemKey={'id'}
-      data={products}
-      height={containerHeight}
-      itemHeight={itemHeight}
-      onScroll={shouldRemoveOnScroll ? undefined : handleScroll}
-      columnCount={columnCount}
-      renderItem={(item) => (
-        <Product name={item.name} image={item.image} id={item.id} />
-      )}
-      loadingIndicator={
-        <>
-          {loading && <Loading />}
-          {!reachedLimit.current && (
-            <ViewMoreButton
-              current={products.length}
-              total={FURNITURE.length}
-              disabled={loading}
-              onClick={handleViewMore}
-            />
-          )}
-        </>
-      }
-    />
+    <div css={{ marginBlock: 30 }} className="products-grid">
+      <InfiniteScrolling
+        itemKey={'id'}
+        data={products}
+        height={containerHeight}
+        gap={gap}
+        onScroll={shouldRemoveOnScroll ? undefined : handleScroll}
+        columnCount={columnCount}
+        itemHeight={productHeight}
+        renderItem={(item) => (
+          <Product
+            name={item.name}
+            image={item.image}
+            onLoadedContent={handleUpdateHeight}
+          />
+        )}
+        loadingIndicator={
+          <>
+            {loading && <Loading />}
+            {!reachedLimit.current && (
+              <ViewMoreButton
+                current={products.length}
+                total={FURNITURE.length}
+                disabled={loading}
+                onClick={handleViewMore}
+              />
+            )}
+          </>
+        }
+      />
+    </div>
   );
 };
 
