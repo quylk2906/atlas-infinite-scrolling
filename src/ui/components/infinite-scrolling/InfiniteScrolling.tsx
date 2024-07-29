@@ -1,62 +1,79 @@
-import React, { ReactNode } from 'react';
-import { useGrid, useVirtualizer } from '@virtual-grid/react';
+import { Key, ReactNode, useEffect, useMemo, useRef } from 'react';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import { chunkArray } from '../../../helpers';
+import { isEmpty } from 'lodash';
 
-type RenderItem<T> = (item: T, index: number) => React.ReactNode;
+type RenderItem<T> = (item: T, index: number) => ReactNode;
 
 type Props<T> = {
   data: T[];
   renderItem?: RenderItem<T>;
-  itemKey: ((item: T) => React.Key) | keyof T;
-  height?: number;
+  itemKey: ((item: T) => Key) | keyof T;
   itemHeight?: number;
   columnCount?: number;
+  rowClass?: string;
+  itemClass?: string;
   gap?: number;
   loadingIndicator?: ReactNode;
-  onScroll?: (e: React.UIEvent<HTMLElement, UIEvent>) => void;
+  onLoadMore?: () => void;
 };
+
+const COUNTDOWN_FLAG = 3;
+const LOADING_HEIGHT = 140;
 
 const InfiniteScrolling = <T,>(props: Props<T>) => {
   const {
     data,
     loadingIndicator,
     itemKey,
-    height,
+    rowClass,
+    itemClass,
     itemHeight = 0,
     columnCount = 1,
     gap = 30,
     renderItem,
-    onScroll,
+    onLoadMore,
   } = props;
-  const ref = React.useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const triggerScrollCountdown = useRef(COUNTDOWN_FLAG);
 
-  const grid = useGrid({
-    scrollRef: ref,
-    count: data.length,
-    columns: columnCount,
-    gap: {
-      x: gap,
-      y: gap,
-    },
-    size: { height: itemHeight },
-    // rows: data.length,
-    // totalCount: 500,
-    padding: 14,
-    // invert: true,
-    // overscan: 1,
+  const chunkedData = useMemo(
+    () => chunkArray(data, columnCount),
+    [data, columnCount]
+  );
+
+  const count = chunkedData.length;
+
+  const virtualizer = useWindowVirtualizer({
+    gap,
+    count,
+    // Item height
+    estimateSize: () => itemHeight || 400,
+    // overscan: 0,
+    isScrollingResetDelay: 9,
+    // scrollPaddingEnd: 1500,
+    // paddingEnd: 100,
+    // scrollMargin: 50,
+    // lanes: 3,
+    //  scrollMargin: listRef.current?.offsetTop ?? 0,
   });
 
-  const rowVirtualizer = useVirtualizer(grid.rowVirtualizer);
-  const columnVirtualizer = useVirtualizer(grid.columnVirtualizer);
+  useEffect(() => {
+    const [lastItem] = [...virtualizer.getVirtualItems().reverse()];
 
-  React.useEffect(() => {
-    rowVirtualizer.measure();
-  }, [rowVirtualizer, grid.virtualItemHeight]);
+    if (!lastItem) return;
 
-  React.useEffect(() => {
-    columnVirtualizer.measure();
-  }, [columnVirtualizer, grid.virtualItemWidth]);
+    if (lastItem.index >= chunkedData.length - 1) {
+      if (triggerScrollCountdown.current != 0) {
+        triggerScrollCountdown.current -= 1;
+      } else {
+        triggerScrollCountdown.current = COUNTDOWN_FLAG;
+        onLoadMore?.();
+      }
+    }
+  }, [virtualizer.getVirtualItems()]);
 
-  const renderInnerItem = (item: T, index: number, style: any) => {
+  const renderInnerItem = (item: T, index: number) => {
     if (!renderItem || !item) return null;
     let key: any;
 
@@ -72,47 +89,50 @@ const InfiniteScrolling = <T,>(props: Props<T>) => {
     }
 
     return (
-      <li key={key} style={style}>
-        <div
-          className="item product product-item"
-          css={{ width: '100% !important' }}
-        >
-          {renderItem(item, index)}
-        </div>
+      <li key={key} className={itemClass}>
+        {renderItem(item, index)}
       </li>
     );
   };
 
   return (
-    <div ref={ref} style={{ height, overflowY: 'auto' }} onScroll={onScroll}>
-      <ul
-        style={{
-          position: 'relative',
-          height: rowVirtualizer.getTotalSize(),
-          width: columnVirtualizer.getTotalSize(),
-        }}
-        className="products list items product-items"
-      >
-        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          return (
-            <React.Fragment key={virtualRow.key}>
-              {columnVirtualizer.getVirtualItems().map((virtualColumn) => {
-                const index =
-                  virtualRow.index * columnCount + virtualColumn.index;
-
-                const item = grid.getVirtualItem({
-                  row: virtualRow,
-                  column: virtualColumn,
-                });
-
-                if (!item) return null;
-                return renderInnerItem(data[index], index, item?.style);
-              })}
-            </React.Fragment>
-          );
-        })}
-      </ul>
-      {loadingIndicator}
+    <div ref={listRef}>
+      {isEmpty(chunkedData) ? (
+        loadingIndicator
+      ) : (
+        <div
+          style={{
+            height: virtualizer.getTotalSize() + LOADING_HEIGHT,
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          {virtualizer.getVirtualItems().map((virtualItem) => {
+            return (
+              <ul
+                className={rowClass}
+                key={virtualItem.key}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: virtualItem.size,
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
+                {chunkedData[virtualItem.index]?.map((_, idx2) => {
+                  const index = virtualItem.index * columnCount + idx2;
+                  return renderInnerItem(data[index], index);
+                })}
+              </ul>
+            );
+          })}
+          <div css={{ position: 'absolute', bottom: 0, width: '100%' }}>
+            {loadingIndicator}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -47,6 +47,7 @@ const Product: FC<Props> = (props) => {
             <div className="data-variant-image">
               <a className="product photo product-item-photo">
                 <img
+                  loading="lazy"
                   src={image}
                   onLoad={() =>
                     onLoadedContent?.(

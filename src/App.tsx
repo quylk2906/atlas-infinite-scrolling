@@ -30,7 +30,7 @@ function App() {
               <div className="toolbar toolbar-products">
                 <Sorter />
               </div>
-
+              {/* <GridVirtualizerDynamic /> */}
               <ProductList />
             </div>
           </div>

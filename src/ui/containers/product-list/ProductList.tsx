@@ -8,7 +8,7 @@ import { type Product as ProductType } from '../../../types';
 import { FURNITURE } from '../../../fake-data';
 import useBreakpoint from '../../../hooks/useBreakpoint';
 
-const DEFAULT_LIMIT = 18;
+const DEFAULT_LIMIT = 48;
 
 const ProductList: FC = () => {
   const [page, setPage] = useState(0);
@@ -26,16 +26,12 @@ const ProductList: FC = () => {
 
   const shouldRemoveOnScroll = loading || reachedLimit.current || page > 0;
 
-  const { containerHeight, columnCount, gap } = useMemo(() => {
+  const { columnCount, gap } = useMemo(() => {
     return {
-      containerHeight:
-        (window.innerHeight * (isSmallBreakPoint ? 80 : 70)) / 100,
       columnCount: isSmallBreakPoint ? 2 : 3,
       gap: isSmallBreakPoint ? 16 : 30,
     };
   }, [isSmallBreakPoint]);
-
-  // console.log({ containerHeight, columnCount, itemHeight });
 
   useEffect(() => {
     error &&
@@ -51,22 +47,12 @@ const ProductList: FC = () => {
     setProducts((prev) => prev.concat(data));
   }, [data]);
 
-  const handleScroll = useCallback(
-    (e: React.UIEvent<HTMLElement, UIEvent>) => {
-      // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
-
-      if (
-        Math.abs(
-          e.currentTarget.scrollHeight -
-            e.currentTarget.scrollTop -
-            containerHeight
-        ) <= 1
-      ) {
-        setPage((prev) => prev + 1);
-      }
-    },
-    [containerHeight]
-  );
+  const handleScroll = useCallback(() => {
+    // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
+    if (!shouldRemoveOnScroll) {
+      setPage((prev) => prev + 1);
+    }
+  }, [shouldRemoveOnScroll]);
 
   const handleViewMore = () => {
     if (loading || reachedLimit.current) return;
@@ -88,13 +74,15 @@ const ProductList: FC = () => {
   return (
     <div css={{ marginBlock: 30 }} className="products-grid">
       <InfiniteScrolling
+        key={`${productHeight}`}
         itemKey={'id'}
         data={products}
-        height={containerHeight}
         gap={gap}
-        onScroll={shouldRemoveOnScroll ? undefined : handleScroll}
+        onLoadMore={handleScroll}
         columnCount={columnCount}
         itemHeight={productHeight}
+        rowClass="products list items product-items"
+        itemClass="item product product-item"
         renderItem={(item) => (
           <Product
             name={item.name}
