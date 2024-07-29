@@ -1,7 +1,5 @@
-import React, { Fragment, ReactNode, useMemo } from 'react';
-import VirtualList from 'rc-virtual-list';
-import { chunkArray } from '../../../helpers';
-import isEmpty from 'lodash/isEmpty';
+import React, { ReactNode } from 'react';
+import { useGrid, useVirtualizer } from '@virtual-grid/react';
 
 type RenderItem<T> = (item: T, index: number) => React.ReactNode;
 
@@ -11,7 +9,7 @@ type Props<T> = {
   itemKey: ((item: T) => React.Key) | keyof T;
   height?: number;
   columnCount?: number;
-  itemHeight?: number;
+  gap?: number;
   loadingIndicator?: ReactNode;
   onScroll?: (e: React.UIEvent<HTMLElement, UIEvent>) => void;
 };
@@ -21,24 +19,38 @@ const InfiniteScrolling = <T,>(props: Props<T>) => {
     data,
     loadingIndicator,
     itemKey,
-    itemHeight,
     height,
     columnCount,
+    gap = 30,
     renderItem,
     onScroll,
   } = props;
+  const ref = React.useRef<HTMLDivElement>(null);
 
-  const chunkData = useMemo(
-    () =>
-      chunkArray(data, columnCount).map((el, idx) => ({
-        idx,
-        data: el,
-      })),
-    [data, columnCount]
-  );
+  const grid = useGrid({
+    scrollRef: ref,
+    count: data.length,
+    columns: columnCount,
+    gap,
+    // rows: data.length / 3,
+    totalCount: 9,
+    padding: 14,
+    // size: { height: 500, width: 400 },
+  });
 
-  const renderInnerItem = (item: T, index: number) => {
-    if (!renderItem) return null;
+  const rowVirtualizer = useVirtualizer(grid.rowVirtualizer);
+  const columnVirtualizer = useVirtualizer(grid.columnVirtualizer);
+
+  React.useEffect(() => {
+    rowVirtualizer.measure();
+  }, [rowVirtualizer, grid.virtualItemHeight]);
+
+  React.useEffect(() => {
+    columnVirtualizer.measure();
+  }, [columnVirtualizer, grid.virtualItemWidth]);
+
+  const renderInnerItem = (item: T, index: number, style: any) => {
+    if (!renderItem || !item) return null;
     let key: any;
 
     if (typeof itemKey === 'function') {
@@ -53,41 +65,49 @@ const InfiniteScrolling = <T,>(props: Props<T>) => {
     }
 
     return (
-      <li className="item product product-item" key={key}>
-        {renderItem(item, index)}
+      <li key={key} style={{ ...style }}>
+        <div
+          className="item product product-item"
+          css={{ width: '100% !important' }}
+        >
+          {renderItem(item, index)}
+        </div>
       </li>
     );
   };
 
   return (
-    <div className="products wrapper grid products-grid">
-      {isEmpty(chunkData) ? (
-        loadingIndicator
-      ) : (
-        <VirtualList
-          itemKey={'idx'}
-          data={chunkData}
-          height={height}
-          itemHeight={itemHeight}
-          onScroll={onScroll}
-          styles={{
-            verticalScrollBarThumb: { marginLeft: 8 },
-          }}
-        >
-          {(el, idx) => {
-            return (
-              <Fragment key={el.idx}>
-                <ul className="products list items product-items">
-                  {el.data.map((childEl, childIdx) =>
-                    renderInnerItem(childEl, childIdx)
-                  )}
-                </ul>
-                {idx === chunkData.length - 1 && loadingIndicator}
-              </Fragment>
-            );
-          }}
-        </VirtualList>
-      )}
+    <div
+      ref={ref}
+      style={{ height, overflowY: 'auto', overflowX: 'hidden' }}
+      className="products-grid"
+      onScroll={onScroll}
+    >
+      <ul
+        style={{
+          position: 'relative',
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          width: `${columnVirtualizer.getTotalSize()}px`,
+        }}
+        className="products list items product-items"
+      >
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+          return (
+            <React.Fragment key={virtualRow.key}>
+              {columnVirtualizer.getVirtualItems().map((virtualColumn) => {
+                const index = virtualRow.index * 3 + virtualColumn.index;
+                const item = grid.getVirtualItem({
+                  row: virtualRow,
+                  column: virtualColumn,
+                });
+                if (!item) return null;
+                return renderInnerItem(data[index], index, item.style);
+              })}
+            </React.Fragment>
+          );
+        })}
+      </ul>
+      {loadingIndicator}
     </div>
   );
 };
