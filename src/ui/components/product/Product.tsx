@@ -1,12 +1,12 @@
 import clsx from 'clsx';
-import { FC, memo, useState } from 'react';
+import { FC, memo, useRef, useState } from 'react';
 
 import styles from './Product.module.scss';
 
 type Props = {
-  id?: string;
   name: string;
   image: string;
+  onLoadedContent?: (height: number) => void;
 };
 
 const BULLET_COLORS = [
@@ -31,14 +31,12 @@ const BULLET_COLORS = [
 type BulletColor = (typeof BULLET_COLORS)[number]['value'];
 
 const Product: FC<Props> = (props) => {
-  const { name, image } = props;
+  const { name, image, onLoadedContent } = props;
   const [activeColor, setActiveColor] = useState<BulletColor>('white');
+  const divRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      data-product-id={4522}
-      className="cdz-product-top amasty-label-for-4522  product-configurable"
-    >
+    <div ref={divRef}>
       <div className="product-item-info">
         <div className="product-wrapper">
           <div
@@ -48,7 +46,14 @@ const Product: FC<Props> = (props) => {
           >
             <div className="data-variant-image">
               <a className="product photo product-item-photo">
-                <img src={image} />
+                <img
+                  src={image}
+                  onLoad={() =>
+                    onLoadedContent?.(
+                      divRef.current?.getBoundingClientRect().height ?? 0
+                    )
+                  }
+                />
               </a>
             </div>
           </div>
